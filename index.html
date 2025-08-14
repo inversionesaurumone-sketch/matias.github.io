@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Productos - Aurum One</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos personalizados y paleta de colores del logo */
+        :root {
+            --color-primary-dark: #2A3F54; /* Azul oscuro del logo */
+            --color-accent-gold: #D4A017;   /* Dorado del logo */
+            --color-secondary-blue: #5A9BAB;/* Azul claro del logo */
+            --color-light-gray: #f3f4f6;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-light-gray);
+        }
+        .header-bg { background-color: var(--color-primary-dark); }
+        .accent-gold-bg { background-color: var(--color-accent-gold); }
+        .accent-gold-text { color: var(--color-accent-gold); }
+        .secondary-blue-bg { background-color: var(--color-secondary-blue); }
+        .secondary-blue-text { color: var(--color-secondary-blue); }
+        
+        .tab-button {
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            margin: 4px;
+            padding: 0.5rem 1rem;
+        }
+        .tab-active {
+            background-color: var(--color-primary-dark);
+            color: white;
+            font-weight: 700;
+        }
+        .tab-inactive {
+            color: var(--color-primary-dark);
+        }
+        .tab-inactive:hover {
+            background-color: #e9e9e9;
+        }
+
+        .product-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .info-section {
+            background-color: white;
+            border-left: 5px solid var(--color-accent-gold);
+        }
+        .brand-title {
+            color: var(--color-primary-dark);
+            border-bottom: 2px solid var(--color-secondary-blue);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header-bg shadow-lg">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <img src="AURUM_LOGO.png" alt="Logo Aurum One" class="h-12 mr-4">
+            </div>
+            <h1 class="text-2xl md:text-3xl font-bold text-white hidden sm:block">Soluciones Integrales</h1>
+        </div>
+    </header>
+
+    <!-- Navegación de Categorías -->
+    <nav id="main-nav" class="bg-white shadow-md sticky top-0 z-10">
+        <div class="container mx-auto px-4">
+            <div id="tabs" class="flex flex-wrap justify-center items-center">
+                <button data-category="inicio" class="tab-button font-semibold tab-active">Inicio</button>
+                <button data-category="repuestosMaquinaria" class="tab-button font-semibold tab-inactive">Repuestos Maquinaria</button>
+                <button data-category="repuestosCamionetas" class="tab-button font-semibold tab-inactive">Repuestos Camionetas</button>
+                <button data-category="materiales" class="tab-button font-semibold tab-inactive">Materiales e Insumos</button>
+                <button data-category="equipamientoSeguridad" class="tab-button font-semibold tab-inactive">Equipamiento y Seguridad</button>
+                <button data-category="componentesElectricos" class="tab-button font-semibold tab-inactive">Componentes Eléctricos e Hidráulicos</button>
+                <button data-category="filtros" class="tab-button font-semibold tab-inactive">Filtros</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenedor Principal -->
+    <main class="container mx-auto p-4 md:p-8">
+        
+        <!-- Contenedor de Búsqueda (se muestra u oculta con JS) -->
+        <div class="mb-8 hidden" id="search-container">
+            <input type="text" id="searchInput" placeholder="Buscar en la categoría actual..." class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-600">
+        </div>
+
+        <!-- Página de Inicio -->
+        <section id="inicio" class="category-content">
+            <!-- El contenido se insertará aquí con JavaScript -->
+        </section>
+
+        <!-- Categorías de Productos -->
+        <section id="repuestosMaquinaria" class="category-content hidden"></section>
+        <section id="repuestosCamionetas" class="category-content hidden"></section>
+        <section id="materiales" class="category-content hidden"></section>
+        <section id="equipamientoSeguridad" class="category-content hidden"></section>
+        <section id="componentesElectricos" class="category-content hidden"></section>
+        <section id="filtros" class="category-content hidden"></section>
+
+        <!-- Mensaje de no resultados -->
+        <div id="no-results" class="text-center py-12 hidden">
+            <h3 class="text-2xl font-semibold text-gray-600">No se encontraron productos</h3>
+            <p class="text-gray-500 mt-2">Intenta con otra búsqueda o revisa las categorías.</p>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 text-white mt-12 py-6">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2025 Aurum One. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        const products = {
+            repuestosMaquinaria: [
+                { category: 'PERFORADORA HLX-5', code: '550 056 76', description: 'Niple de camara de barrido' },
+                { category: 'PERFORADORA HLX-5', code: '872 189 39', description: 'Sellos de camara de barrido' },
+                { category: 'PERFORADORA HLX-5', code: '550 668 36', description: 'Bujes de teflon de camara de barrido' },
+                { category: 'PERFORADORA HLX-5', code: '152 744 08', description: 'Buje delantero de camara de barrido' },
+                { category: 'PERFORADORA HLX-5', code: '152 747 98', description: 'Buje trasero mas shank de camara de barrido' },
+                { category: 'PERFORADORA HLX-5', code: '152 748 18', description: 'Empaquetadura de cabezal de barrido' },
+                { category: 'PERFORADORA HLX-5', code: '550 034 00', description: 'Perno de anclaje de cabezal de barrido' },
+                { category: 'PERFORADORA HLX-5', code: '926 029 8', description: 'Membranas de acumulador, HP-LP' },
+                { category: 'PERFORADORA HLX-5', code: '807 590 69', description: 'Valvulas de acumulador' },
+                { category: 'PERFORADORA HLX-5', code: '550 508 28', description: 'Coupling de bronce' },
+                { category: 'PERFORADORA HLX-5', code: '550 577 98', description: 'Manguito de rotacion' },
+                { category: 'PERFORADORA HLX-5', code: '550 042 26', description: 'Empaquetadura de acumuladores' },
+                { category: 'PERFORADORA HLX-5', code: '819 532 09', description: 'Oring interior de acumuladores' },
+                { category: 'PERFORADORA HLX-5', code: '522 134 90', description: 'Oring exterior de acumuladores' },
+                { category: 'PERFORADORA HLX-5', code: '152 473 28', description: 'Camara de barrido' },
+                { category: 'PERFORADORA HLX-5', code: '476 896 8', description: 'Goma deflectora de agua para culatin' },
+                { category: 'PERFORADORA HLX-5', code: '152 723 68', description: 'Freno trasero del culatin' },
+                { category: 'PERFORADORA HLX-5', code: '330 016 98', description: 'Patines de teflon de perforadora' },
+                { category: 'PERFORADORA HLX-5', code: '152 716 38', description: 'TRANTE P/JUMBO AXER' },
+                { category: 'PERFORADORA HLX-5', code: '152 525 68', description: 'TIJERCA P/JUMBO AXE-RA' },
+                { category: 'PERFORADORA HLX-5', code: '550 036 25', description: '55003625 ACUMULADORES' },
+                { category: 'PERFORADORA HLX-5', code: '550 036 27', description: '55003627 ACUMULADORES' },
+                { category: 'PERFORADORA HLX-5', code: '812 949 59', description: 'NUT LOCK' },
+                { category: 'PERFORADORA HLX-5', code: '800 348 19', description: 'BONDED SEAL' },
+                { category: 'PERFORADORA HLX-5', code: '152 745 38', description: 'COVER FRON' },
+                { category: 'PERFORADORA HLX-5', code: '150 809 18', description: 'PLATE GASKET' },
+                { category: 'PERFORADORA HLX-5', code: '332 779 38', description: 'CATALINA AVANCE' },
+                { category: 'PERFORADORA HLX-5', code: '572 102 40', description: 'NIPLE CATALINA' },
+                { category: 'PERFORADORA HLX-5', code: '888 172 19', description: 'VALVE' },
+                { category: 'PERFORADORA HLX-5', code: '867 986 99', description: 'RODAMIENTO' },
+                { category: 'EQUIPO LH-410', code: '56213272', description: 'Perno rueda (Wheel bolt)' },
+                { category: 'EQUIPO LH-410', code: '6544971', description: 'Tuerca rueda (Wheel nut)' },
+                { category: 'EQUIPO LH-410', code: '56020098', description: 'Plumillas (Wipers)' },
+                { category: 'EQUIPO LH-410', code: '56017890', description: 'Manguito admisión (Air intake hose)' },
+                { category: 'EQUIPO LH-410', code: 'BG00329869', description: 'Tope de balde (Bucket stop)' },
+                { category: 'EQUIPO LH-410', code: '4704266', description: 'Cruceta (Crossjoint)' },
+                { category: 'EQUIPO LH-410', code: '2800740', description: 'Damper 02800740 (Damper 02800740)' },
+                { category: 'EQUIPO LH-410', code: '4704256', description: 'Cruceta (Crossjoint)' },
+                { category: 'EQUIPO LH-410', code: '56039414', description: 'Tope boom (Boom stop)' },
+                { category: 'EQUIPO LH-410', code: '2802900', description: 'Ducto agua motor (Engine water duct)' },
+                { category: 'EQUIPO LH-410', code: '56009145', description: 'Abrazadera manguito (Hose clamp)' },
+                { category: 'EQUIPO LH-410', code: '69038045', description: 'Respiradero diferencial (Differential breather)' },
+                { category: 'EQUIPO LH-410', code: '56043170', description: 'Abrazadera manguera agua (Water hose clamp)' },
+                { category: 'EQUIPO LH-410', code: '56002931', description: 'Cilindro de levante (Lift cylinder)' },
+                { category: 'EQUIPO LH-410', code: '56002932', description: 'Cilindro de volteo (Tilt cylinder)' },
+                { category: 'EQUIPO LH-410', code: '56019416', description: 'Kit de sello cilindro levante (Seal kit lift cylinder)' },
+                { category: 'EQUIPO LH-410', code: '4762065', description: 'Válvula de carga (Charging valve)' },
+                { category: 'EQUIPO LH-410', code: '4790277', description: 'Célula de enfriador de aceite (Oil cooler cell)' },
+                { category: 'EQUIPO LH-410', code: '4790831', description: 'Kit de sello motor enfriador lateral (Side cooler motor seal kit)' },
+                { category: 'EQUIPO LH-410', code: '56005916', description: 'Bomba de liberación de frenos (Brake release pump)' },
+                { category: 'EQUIPO LH-410', code: '56016063', description: 'Kit de reparación (Repair kit)' },
+                { category: 'EQUIPO LH-410', code: '56017633', description: 'Ensambaje de válvula de secuencia (Sequence valve assembly)' },
+                { category: 'EQUIPO LH-410', code: '56022807', description: 'Válvula de secuencia, carga de frenos (Sequence valve, brake charging)' },
+                { category: 'EQUIPO LH-410', code: '56023923', description: 'Válvula de ajuste de bomba de frenos (Brake pump adjusting valve)' },
+                { category: 'EQUIPO LH-410', code: '56024629', description: 'Bomba hidráulica de frenos (Brake hydr pump)' },
+                { category: 'EQUIPO LH-410', code: '56024635', description: 'Bomba de enfriamiento (Cooling pump)' },
+                { category: 'JUMBO DD-321', code: '886 012 19', description: 'CARTUCHO DE FILTRO DE AIRE (AIR FILTER CARTRIDGE)' },
+                { category: 'JUMBO DD-321', code: '800 733 89', description: 'RODAMIENTO SIMPLE (BEARING, PLAIN)' },
+                { category: 'JUMBO DD-321', code: '551 990 66', description: 'VENTILADOR (BREATHER)' },
+                { category: 'JUMBO DD-321', code: '263 634 18', description: 'AMORTIGUADOR (BUFFER)' },
+                { category: 'JUMBO DD-321', code: '551 501 27', description: 'AMORTIGUADOR DE GOMA (BUFFER, RUBBER)' },
+                { category: 'JUMBO DD-321', code: '851 604 09', description: 'CASQUILLO (BUSHING)' },
+                { category: 'JUMBO DD-321', code: '552 081 04', description: 'CASQUILLO (BUSHING)' },
+                { category: 'JUMBO DD-321', code: '264 334 48', description: 'CASQUILLO (BUSHING)' },
+                { category: 'JUMBO DD-321', code: '550 101 67', description: 'CASQUILLO (BUSHING)' },
+                { category: 'JUMBO DD-321', code: '207 973 88', description: 'CASQUILLO CON RODAMIENTO (BUSHING, BEARING)' },
+                { category: 'JUMBO DD-321', code: '264 240 18', description: 'CASQUILLO CON RODAMIENTO (BUSHING, BEARING)' },
+                { category: 'JUMBO DD-321', code: '56002931', description: 'Cilindro de levante (Lift cylinder)' },
+                { category: 'JUMBO DD-321', code: '56002932', description: 'Cilindro de volteo (Tilt cylinder)' },
+                { category: 'JUMBO DD-321', code: '56019416', description: 'Kit de sello cilindro levante (Seal kit lift cylinder)' },
+                { category: 'JUMBO DD-321', code: '4762065', description: 'Válvula de carga (Charging valve)' },
+                { category: 'JUMBO DD-321', code: '4790277', description: 'Célula de enfriador de aceite (Oil cooler cell)' },
+                { category: 'JUMBO DD-321', code: '4790831', description: 'Kit de sello motor enfriador lateral (Side cooler motor seal kit)' },
+                { category: 'JUMBO DD-321', code: '56005916', description: 'Bomba de liberación de frenos (Brake release pump)' },
+                { category: 'JUMBO DD-321', code: '56016063', description: 'Kit de reparación (Repair kit)' },
+                { category: 'JUMBO DD-321', code: '56017633', description: 'Ensambaje de válvula de secuencia (Sequence valve assembly)' },
+                { category: 'JUMBO DD-321', code: '56022807', description: 'Válvula de secuencia, carga de frenos (Sequence valve, brake charging)' },
+                { category: 'JUMBO DD-321', code: '56023923', description: 'Válvula de ajuste de bomba de frenos (Brake pump adjusting valve)' },
+                { category: 'JUMBO DD-321', code: '56024629', description: 'Bomba hidráulica de frenos (Brake hydr pump)' },
+                { category: 'JUMBO DD-321', code: '56024635', description: 'Bomba de enfriamiento (Cooling pump)' },
+                { category: 'Rodados y Cizalla', code: 'Consultar Marca', description: 'Rodillos' },
+                { category: 'Rodados y Cizalla', code: 'Consultar Marca', description: 'Ruedas Guía' },
+                { category: 'Rodados y Cizalla', code: 'Consultar Marca', description: 'Sprockets' },
+                { category: 'Transmisión', code: 'Dana', description: 'Transmisión' },
+                { category: 'Transmisión', code: 'Dana', description: 'Tren de Potencia' },
+                { category: 'Transmisión', code: 'Dana', description: 'Diferenciales' },
+                { category: 'Transmisión', code: 'Spicer', description: 'Transmisión' },
+                { category: 'Transmisión', code: 'Spicer', description: 'Tren de Potencia' },
+                { category: 'Transmisión', code: 'Spicer', description: 'Diferenciales' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Gas Valve' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Rodamientos' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Direction Valve' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Cabezal Perforadora' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Breaker' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Horómetro' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Tope de Goma' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Sellos' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Holder Set' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Piola Retorno' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Guide' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Carrete Manguera' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Polea' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Piola' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Holder' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Teflones' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Expanding Shaft' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Connect Plate' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Profile' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Porta Filtro' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Soporte' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Spring' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Axial Deal' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Acumulador' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Motor Rotary' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Piston Guide' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Contactor' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Bobina' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Cable Señal' },
+                { category: 'Epiroc / Sandvik', code: 'Epiroc / Sandvik', description: 'Unidad de Rotación' }
+            ],
+            repuestosCamionetas: [
+                { category: 'TOYOTA HILUX', code: '-', description: 'cremallera de direccion camioneta toyota hilux' },
+                { category: 'TOYOTA HILUX', code: '-', description: 'volante camioneta hilux' },
+                { category: 'TOYOTA HILUX', code: '-', description: 'rodamiento empuje camioneta hilux' },
+                { category: 'TOYOTA HILUX', code: '-', description: 'FOCO POSICIÓN TRASERO IZQUIERDO CAMIONETA HILUX' },
+                { category: 'TOYOTA HILUX', code: '-', description: 'FOCO POSICIÓN TRASERO DERECHO CAMIONETA HILUX' },
+                { category: 'TOYOTA HILUX', code: '-', description: 'SENSOR ABS DELANTERO DERECHO CAMIONETA HILUX' },
+                { category: 'TOYOTA HILUX', code: '-', description: 'SENSOR ABS DELANTERO IZQUIERDO CAMIONETA HILUX' },
+                { category: 'TOYOTA HILUX', code: '-', description: 'SENSOR ABS TRASERO DERECHO CAMIONETA HILUX' },
+                { category: 'TOYOTA HILUX', code: '-', description: 'SENSOR ABS TRASERO IZQUIERDO CAMIONETA HILUX' },
+                { category: 'TOYOTA HILUX', code: '-', description: 'Parachoque delantero' },
+                { category: 'TOYOTA HILUX', code: '-', description: 'Parachoque trasero' },
+                { category: 'TOYOTA HILUX', code: '-', description: 'Capot' },
+                { category: 'TOYOTA HILUX', code: '-', description: 'Espejos' },
+                { category: 'TOYOTA HILUX', code: '-', description: 'Focos' },
+                { category: 'TOYOTA HILUX', code: '-', description: 'Portalón' },
+                { category: 'TOYOTA HILUX', code: '-', description: 'Puertas' },
+                { category: 'TOYOTA HILUX', code: '-', description: 'Motor' },
+                { category: 'MITSUBISHI L200', code: '-', description: 'CREMALLERA DIRECCION L200' },
+                { category: 'MITSUBISHI L200', code: '-', description: 'RODAMIENTO EMPUJE L200' },
+                { category: 'MITSUBISHI L200', code: '-', description: '52991L CAÑERIA FRENO TRASERA IZQUIERDA L200' },
+                { category: 'MITSUBISHI L200', code: '-', description: 'HOMOCINÉTICA DER LADO RUEDA L200' },
+                { category: 'MITSUBISHI L200', code: '-', description: 'HOMOCINÉTICA IZQ LADO RUEDA L200' },
+                { category: 'MITSUBISHI L200', code: '-', description: 'KIT REPARACION TAMBOR DE FRENO L200' },
+                { category: 'MITSUBISHI L200', code: '-', description: 'CORREA ALTERNADOR L200' },
+                { category: 'MITSUBISHI L200', code: '-', description: 'CORREA A/C L200' },
+                { category: 'MITSUBISHI L200', code: '-', description: 'ACTUADOR TRACCIÓN L200' },
+                { category: 'MITSUBISHI L200', code: '-', description: 'SOPORTE DE CAJA LATERAL MITSUBISHI L200' },
+                { category: 'MITSUBISHI L200', code: '-', description: 'ADAPTADOR CILINDRICO ESCLAVO EMBRAGUE L200' },
+                { category: 'MITSUBISHI L200', code: '-', description: 'RADIADOR MOTOR L200' },
+                { category: 'MITSUBISHI L200', code: '-', description: 'BULBO DIFERENCIAL DELANTERO L200' },
+                { category: 'MITSUBISHI L200', code: '-', description: 'PARACHOQUE DELANTERO L200' },
+                { category: 'MITSUBISHI L200', code: '-', description: 'NEBLINEROS L200' },
+                { category: 'MITSUBISHI L200', code: '-', description: 'Parachoque delantero' },
+                { category: 'MITSUBISHI L200', code: '-', description: 'Parachoque trasero' },
+                { category: 'MITSUBISHI L200', code: '-', description: 'Capot' },
+                { category: 'MITSUBISHI L200', code: '-', description: 'Espejos' },
+                { category: 'MITSUBISHI L200', code: '-', description: 'Focos' },
+                { category: 'MITSUBISHI L200', code: '-', description: 'Portalón' },
+                { category: 'MITSUBISHI L200', code: '-', description: 'Puertas' },
+                { category: 'MITSUBISHI L200', code: '-', description: 'Motor' }
+            ],
+            materiales: [
+                { category: 'INSUMOS TALLER', code: '-', description: 'DESENGRASANTE ALCALINO 880 (BALDE 20 LT)' },
+                { category: 'INSUMOS TALLER', code: '-', description: 'DESINCRUSTANTE DE HORMIGÓN SUPER DESOXIDANTE (BALDE 23 KG)' },
+                { category: 'INSUMOS TALLER', code: '-', description: 'CINTA REFLECTANTE AMARILLO VERDE LIMON' },
+                { category: 'INSUMOS TALLER', code: '-', description: 'CINTA REFLECTANTE BLANCA/ROJA' },
+                { category: 'INSUMOS TALLER', code: '-', description: 'PINTURA SPRAY NEGRA' },
+                { category: 'INSUMOS TALLER', code: '-', description: 'PINTURA SPRAY ROJO' },
+                { category: 'INSUMOS TALLER', code: '-', description: 'GATA BOTELLA 30 TON' },
+                { category: 'INSUMOS TALLER', code: '-', description: 'TRABA TUERCA' },
+                { category: 'INSUMOS TALLER', code: '-', description: 'RENOVADOR DE NEUMATICOS AEROSOL' },
+                { category: 'INSUMOS TALLER', code: '-', description: 'SILICONA PARA TABLERO SPRAY' },
+                { category: 'INSUMOS TALLER', code: '-', description: 'SILICONA ULTRA GREY' },
+                { category: 'INSUMOS TALLER', code: '-', description: 'SET DE GRATAS PARA TALADRO' },
+                { category: 'INSUMOS TALLER', code: '-', description: 'WD-40' },
+                { category: 'INSUMOS TALLER', code: '-', description: 'LIMPIA CONTACTOS SPRAY' },
+                { category: 'INSUMOS TALLER', code: '-', description: 'LIMPIADOR DE FRENOS' },
+                { category: 'INSUMOS TALLER', code: '-', description: 'PORTA FUSIBLE FLOTANTE' },
+                { category: 'INSUMOS TALLER', code: '-', description: 'AMARRAS PLASTICAS' },
+                { category: 'INSUMOS TALLER', code: '-', description: 'CORTA CORRIENTE DE 300AMP' },
+                { category: 'INSUMOS TALLER', code: '-', description: 'TERMINAL HEMBRA/MACHO' },
+                { category: 'INSUMOS TALLER', code: '-', description: 'HUINCHA AISLANTE' },
+                { category: 'INSUMOS TALLER', code: '-', description: 'TUBO CORRUGADO' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'ACEITERA' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'ALICATE' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'PELACABLES' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'ANTICORROSIVO' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'LIMPIADOR DE CARBURADOR' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'ACEITE SINTETICO 2T' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'GRASA LUBRICANTE MULTIUSO' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'ARCO SIERRA' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'ATORNILLADOR PROBADOR CORRIENTE' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'JUEGO ATORNILLADORES' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'MAGNETIZADOR/DESMAGNETIZADOR' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'AZADON' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'MANGO PARA AZADON' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'AZA-HACHA' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'BALANZA' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'BISAGRA' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'BOMBA INYECTORA DE GRASA' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'BOMBA TRASVASIJAR' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'BOMBIN' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'COMPRESOR AIRE PORTATIL' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'BROCHA MANGO PLASTICO' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'CABLE DE ACERO RECUBIERTO PVC' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'CABLES PUENTE BATERIAS' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'DESTORCEDOR' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'ESLABON RAPIDO' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'GANCHO CON SEGURO' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'GANCHO "S"' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'MOSQUETON' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'CAJA PARA HERRAMIENTAS' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'CANDADO' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'ACCESORIOS PARA PUERTAS' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'CARRO DE CARGA' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'CEPILLO' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'CINCEL' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'COMBO' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'CORTATUBO' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'CORTA VIDRIOS' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'CUCHILLO' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'CUENTA BULTOS' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'CURVADOR' },
+                { category: 'HERRAMIENTAS', brand: 'TRUPER', code: 'TRUPER', description: 'CHISPERO' },
+                { category: 'HERRAMIENTAS', brand: 'RUBI', code: 'RUBI', description: 'CORTADOR DE AZULEJOS' },
+                { category: 'HERRAMIENTAS', brand: 'RUBI', code: 'RUBI', description: 'TENAZA' },
+                { category: 'HERRAMIENTAS', brand: 'RUBI', code: 'RUBI', description: 'ACCESORIOS PARA CORTADORES' },
+                { category: 'HERRAMIENTAS', brand: 'RUBI', code: 'RUBI', description: 'NIVELADOR Y SEPARADOR DE PISO' },
+                { category: 'HERRAMIENTAS', brand: 'KRAFT', code: 'KRAFT', description: 'ATORNILLADOR' },
+                { category: 'HERRAMIENTAS', brand: 'KRAFT', code: 'KRAFT', description: 'BROCA CILINDRICA' },
+                { category: 'HERRAMIENTAS', brand: 'KRAFT', code: 'KRAFT', description: 'BROCA PARA PERCUTOR SDS PLUS' },
+                { category: 'HERRAMIENTAS', brand: 'KRAFT', code: 'KRAFT', description: 'CINCEL SDS-PLUS' },
+                { category: 'HERRAMIENTAS', brand: 'KRAFT', code: 'KRAFT', description: 'BROCA PARA VIDRIO' },
+                { category: 'HERRAMIENTAS', brand: 'KRAFT', code: 'KRAFT', description: 'BROCA PARA MADERA' },
+                { category: 'HERRAMIENTAS', brand: 'KRAFT', code: 'KRAFT', description: 'JUEGO DE BROCAS' },
+                { category: 'HERRAMIENTAS', brand: 'KRAFT', code: 'KRAFT', description: 'CAJA PARA LLAVES' },
+                { category: 'HERRAMIENTAS', brand: 'KRAFT', code: 'KRAFT', description: 'CAJA PARA VALORES' },
+                { category: 'HERRAMIENTAS', brand: 'KRAFT', code: 'KRAFT', description: 'CASQUILLOS DE ALUMINIO' },
+                { category: 'HERRAMIENTAS', brand: 'KRAFT', code: 'KRAFT', description: 'DISCO DE CORTE' },
+                { category: 'HERRAMIENTAS', brand: 'KRAFT', code: 'KRAFT', description: 'EXTRACTOR DE PERNOS' },
+                { category: 'HERRAMIENTAS', brand: 'KRAFT', code: 'KRAFT', description: 'LAPIZ CARPINTERO' },
+                { category: 'HERRAMIENTAS', brand: 'KRAFT', code: 'KRAFT', description: 'LIMPIA VIDRIOS' },
+                { category: 'HERRAMIENTAS', brand: 'KRAFT', code: 'KRAFT', description: 'LIMA' },
+                { category: 'HERRAMIENTAS', brand: 'KRAFT', code: 'KRAFT', description: 'LLAVE ALLEN' },
+                { category: 'HERRAMIENTAS', brand: 'KRAFT', code: 'KRAFT', description: 'LLAVE DADO' },
+                { category: 'HERRAMIENTAS', brand: 'KRAFT', code: 'KRAFT', description: 'LLAVE PUNTA Y CORONA' },
+                { category: 'HERRAMIENTAS', brand: 'KRAFT', code: 'KRAFT', description: 'MECHA PARA TALADRO' },
+                { category: 'HERRAMIENTAS', brand: 'KRAFT', code: 'KRAFT', description: 'NIVEL' },
+                { category: 'HERRAMIENTAS', brand: 'KRAFT', code: 'KRAFT', description: 'PORTABROCAS' },
+                { category: 'HERRAMIENTAS', brand: 'KRAFT', code: 'KRAFT', description: 'PUNTA DE TRAZAR' },
+                { category: 'HERRAMIENTAS', brand: 'KRAFT', code: 'KRAFT', description: 'SIERRA DE COPA' },
+                { category: 'HERRAMIENTAS', brand: 'KRAFT', code: 'KRAFT', description: 'TERRAJA' }
+            ],
+            equipamientoSeguridad: [
+                { category: 'Seguridad Vial', code: 'Consultar Marca', description: 'Inclinómetro' },
+                { category: 'Seguridad Vial', code: 'Consultar Marca', description: 'Kit Cámaras 4 Canales con DVR y Sistema BSD IA' },
+                { category: 'Seguridad Vial', code: 'Consultar Marca', description: 'Sensor y Cámaras de Retroceso' },
+                { category: 'Seguridad Vial', code: 'Consultar Marca', description: 'Tercer Ojo Sistema ADAS Anticolisión' },
+                { category: 'Seguridad Vial', code: 'Consultar Marca', description: 'Cámara de Somnolencia Detector de Fatiga' },
+                { category: 'Equipamiento Minero', code: 'Consultar Marca', description: 'Focus Faeneros' },
+                { category: 'Equipamiento Minero', code: 'Consultar Marca', description: 'Porta Cuñas' },
+                { category: 'Equipamiento Minero', code: 'Consultar Marca', description: 'Baliza' },
+                { category: 'Equipamiento Minero', code: 'Consultar Marca', description: 'Pértiga' },
+                { category: 'Equipamiento Minero', code: 'Consultar Marca', description: 'Extintor' },
+                { category: 'Equipamiento Minero', code: 'Consultar Marca', description: 'Cadenas de Nieve' },
+                { category: 'Equipamiento Minero', code: 'Consultar Marca', description: 'Bidón Metálico' },
+                { category: 'Equipamiento Minero', code: 'Consultar Marca', description: 'Linternas de Cabeza' },
+                { category: 'Equipamiento Minero', code: 'Consultar Marca', description: 'Caja Metálica' },
+                { category: 'Equipamiento Minero', code: 'Consultar Marca', description: 'Triángulos Auto Pare' }
+            ],
+            componentesElectricos: [
+                { category: 'Componentes Eléctricos e Hidráulicos', code: 'Consultar Marca', description: 'Cargador de Baterías' },
+                { category: 'Componentes Eléctricos e Hidráulicos', code: 'Consultar Marca', description: 'Partidor de Baterías' },
+                { category: 'Componentes Eléctricos e Hidráulicos', code: 'Phoenix Contact', description: 'Mantenedor de Baterías' },
+                { category: 'Componentes Eléctricos e Hidráulicos', code: 'Bosch Rexroth', description: 'Válvulas Hidráulicas' },
+                { category: 'Componentes Eléctricos e Hidráulicos', code: 'Consultar Marca', description: 'Compresores de AC' },
+                { category: 'Componentes Eléctricos e Hidráulicos', code: 'Harting Han', description: 'Conector' },
+                { category: 'Componentes Eléctricos e Hidráulicos', code: 'ABB', description: 'Parada de Emergencia' },
+                { category: 'Componentes Eléctricos e Hidráulicos', code: 'ABB', description: 'Mando Rotatorio' },
+                { category: 'Componentes Eléctricos e Hidráulicos', code: 'ABB', description: 'Breaker' },
+                { category: 'Componentes Eléctricos e Hidráulicos', code: 'Consultar Marca', description: 'Direccionales' },
+                { category: 'Componentes Eléctricos e Hidráulicos', code: 'Consultar Marca', description: 'Insertos' },
+                { category: 'Componentes Eléctricos e Hidráulicos', code: 'Consultar Marca', description: 'Relé' },
+                { category: 'Componentes Eléctricos e Hidráulicos', code: 'Consultar Marca', description: 'Correas' },
+                { category: 'Componentes Eléctricos e Hidráulicos', code: 'Schneider Electric', description: 'Contactor' },
+                { category: 'Componentes Eléctricos e Hidráulicos', code: 'Deutsch', description: 'Conectores' },
+                { category: 'Componentes Eléctricos e Hidráulicos', code: 'Consultar Marca', description: 'Pillow Block Main Switch' },
+                { category: 'Componentes Eléctricos e Hidráulicos', code: 'Consultar Marca', description: 'Abrazaderas con Goma' },
+                { category: 'Componentes Eléctricos e Hidráulicos', code: 'Consultar Marca', description: 'Kit de Frenos' },
+                { category: 'Componentes Eléctricos e Hidráulicos', code: 'Consultar Marca', description: 'Torre de Iluminación' },
+                { category: 'Componentes Eléctricos e Hidráulicos', code: 'Consultar Marca', description: 'Herramientas Eléctricas' },
+                { category: 'Componentes Eléctricos e Hidráulicos', code: 'Consultar Marca', description: 'Conectores de Comunicación' },
+                { category: 'Componentes Eléctricos e Hidráulicos', code: 'Consultar Marca', description: 'Accesorios de Engrase' },
+                { category: 'Componentes Eléctricos e Hidráulicos', code: 'Consultar Marca', description: 'Termostato' },
+                { category: 'Componentes Eléctricos e Hidráulicos', code: 'Consultar Marca', description: 'Lámpara de Emergencia' },
+                { category: 'Componentes Eléctricos e Hidráulicos', code: 'Consultar Marca', description: 'Bornes Eléctricos' }
+            ],
+            filtros: [
+                { category: 'Disponibilidad', code: 'Original y Alternativo', description: 'Ofrecemos una amplia gama de filtros en versiones originales y alternativas de alta calidad para adaptarnos a sus necesidades y presupuesto.' },
+                { category: 'Tipos de Filtros', code: 'Consultar Marcas', description: 'Filtros de Aire' },
+                { category: 'Tipos de Filtros', code: 'Consultar Marcas', description: 'Filtros de Combustible' },
+                { category: 'Tipos de Filtros', code: 'Consultar Marcas', description: 'Filtros de Aceite' },
+                { category: 'Tipos de Filtros', code: 'Consultar Marcas', description: 'Filtros Hidráulicos' }
+            ]
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.tab-button');
+            const contents = document.querySelectorAll('.category-content');
+            const searchInput = document.getElementById('searchInput');
+            const noResultsDiv = document.getElementById('no-results');
+            const searchContainer = document.getElementById('search-container');
+            const inicioContent = document.getElementById('inicio');
+            
+            // Cargar contenido de la página de inicio
+            inicioContent.innerHTML = `
+            <div class="space-y-12">
+                <div class="bg-white p-8 rounded-lg shadow-lg text-center">
+                    <h1 class="text-4xl font-bold text-gray-800 mb-4">Soluciones Integrales para Vehículos, Maquinaria y la Industria</h1>
+                    <p class="text-lg text-gray-600">Tu socio estratégico para la continuidad operativa de tus negocios.</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h2 class="text-2xl font-bold mb-3 secondary-blue-text">¿Quiénes Somos?</h2>
+                        <p class="text-gray-700 leading-relaxed">Aurum One es una empresa joven y dinámica especializada en la comercialización de repuestos, equipamiento y soluciones integrales para los sectores automotriz, industrial y minero. Nacemos con el compromiso de ofrecer productos de alto estándar, atención personalizada y soluciones eficaces.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h2 class="text-2xl font-bold mb-3 secondary-blue-text">Misión</h2>
+                        <p class="text-gray-700 leading-relaxed">Ser un socio estratégico para nuestros clientes, brindando soluciones rápidas, confiables y de calidad en repuestos y equipamiento, contribuyendo a la continuidad operativa de sus negocios en todo el país.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div>
+                            <h2 class="text-2xl font-bold mb-4 secondary-blue-text">Importación de Repuestos</h2>
+                            <ul class="list-disc list-inside space-y-2 text-gray-700">
+                                <li>Repuestos alternativos de alta calidad para perforadoras y vigas de las marcas Epiroc, Sandvik y Montabert.</li>
+                                <li>Filtros y portafiltros, tanto originales como alternativos.</li>
+                                <li>Componentes originales para automatización, sistemas eléctricos, industriales e hidráulicos.</li>
+                                <li>Repuestos Originales DANA y Spicer para tren de potencia, transmisión y diferencial.</li>
+                            </ul>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-semibold text-center mb-4 text-gray-600">Trabajamos con las mejores marcas</h3>
+                            <div class="grid grid-cols-4 gap-4">
+                                <p class="font-bold text-center text-gray-700">Mercedes-Benz</p>
+                                <p class="font-bold text-center text-gray-700">IVECO</p>
+                                <p class="font-bold text-center text-gray-700">Cummins</p>
+                                <p class="font-bold text-center text-gray-700">JOHN DEERE</p>
+                                <p class="font-bold text-center text-gray-700">CAT</p>
+                                <p class="font-bold text-center text-gray-700">HELI</p>
+                                <p class="font-bold text-center text-gray-700">VOLVO</p>
+                                <p class="font-bold text-center text-gray-700">KOMATSU</p>
+                                <p class="font-bold text-center text-gray-700">JCB</p>
+                                <p class="font-bold text-center text-gray-700">DEUTZ</p>
+                                <p class="font-bold text-center text-gray-700">DIECI</p>
+                                <p class="font-bold text-center text-gray-700">Bobcat</p>
+                                <p class="font-bold text-center text-gray-700">MONTABERT</p>
+                                <p class="font-bold text-center text-gray-700">normet</p>
+                                <p class="font-bold text-center text-gray-700">Epiroc</p>
+                                <p class="font-bold text-center text-gray-700">SANDVIK</p>
+                                <p class="font-bold text-center text-gray-700">ABB</p>
+                                <p class="font-bold text-center text-gray-700">EATON</p>
+                                <p class="font-bold text-center text-gray-700">Schneider</p>
+                                <p class="font-bold text-center text-gray-700">DEUTSCH</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                 <div class="secondary-blue-bg text-white p-8 rounded-lg shadow-lg text-center">
+                    <h2 class="text-3xl font-bold mb-4">Contáctanos</h2>
+                     <p>Estamos listos para atender tus requerimientos en todo Chile.</p>
+                     <p class="mt-2"><strong>Correo:</strong> inversionesaurumone@gmail.com | <strong>Teléfono:</strong> +56 9 2971 3407</p>
+                     <p class="mt-4 font-semibold">Matias Concha<br><span class="font-normal text-sm">Product Manager - Especialista en Clientes</span><br><span class="font-normal text-sm">+56 9 4021 0341</span></p>
+                </div>
+            </div>`;
+
+            function generateCardHTML(productsList, categoryKey) {
+                if (categoryKey === 'filtros') {
+                    let html = '';
+                    const availability = productsList.find(p => p.category === 'Disponibilidad');
+                    if (availability) {
+                        html += `<div class="info-section p-6 rounded-lg shadow-md my-6"><p class="text-gray-700 leading-relaxed">${availability.description}</p></div>`;
+                    }
+                    
+                    const filterTypes = productsList.filter(p => p.category === 'Tipos de Filtros');
+                    if (filterTypes.length > 0) {
+                        html += `<h2 class="text-2xl font-bold mb-4 mt-8 border-b-2 border-cyan-600 pb-2 secondary-blue-text">Tipos de Filtros</h2>`;
+                        html += '<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">';
+                        filterTypes.forEach(p => {
+                            html += `<div class="product-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 flex flex-col"><div class="p-5 flex-grow"><h3 class="text-lg font-semibold text-gray-800">${p.description}</h3><p class="text-sm text-gray-500 mt-2">Marcas: ${p.code}</p></div><div class="px-5 py-3 bg-gray-50"><span class="inline-block bg-blue-200 text-blue-800 text-xs font-semibold px-2.5 py-1 rounded-full">Consultar Stock</span></div></div>`;
+                        });
+                        html += '</div>';
+                    }
+                    return html;
+                }
+
+                const grouped = productsList.reduce((acc, p) => {
+                    (acc[p.category] = acc[p.category] || []).push(p);
+                    return acc;
+                }, {});
+                let html = '';
+                for (const subCat in grouped) {
+                     if (subCat === 'HERRAMIENTAS') {
+                        html += `<h2 class="text-2xl font-bold mb-4 mt-6 border-b-2 border-cyan-600 pb-2 secondary-blue-text">HERRAMIENTAS</h2>`;
+                        
+                        const toolsByBrand = grouped[subCat].reduce((acc, p) => {
+                            (acc[p.brand] = acc[p.brand] || []).push(p);
+                            return acc;
+                        }, {});
+
+                        for(const brand in toolsByBrand) {
+                            html += `<h3 class="text-xl font-semibold my-4 brand-title pb-2">${brand}</h3>`;
+                            html += '<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">';
+                            toolsByBrand[brand].forEach(p => {
+                                html += `<div class="product-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 flex flex-col"><div class="p-5 flex-grow"><h3 class="text-lg font-semibold text-gray-800">${p.description}</h3><p class="text-sm text-gray-500 mt-2">Marca: ${p.code}</p></div><div class="px-5 py-3 bg-gray-50"><span class="inline-block bg-green-200 text-green-800 text-xs font-semibold px-2.5 py-1 rounded-full">Consultar modelos</span></div></div>`;
+                            });
+                            html += '</div>';
+                        }
+
+                    } else {
+                        html += `<h2 class="text-2xl font-bold mb-4 mt-6 border-b-2 border-cyan-600 pb-2 secondary-blue-text">${subCat}</h2>`;
+                        html += '<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">';
+                        grouped[subCat].forEach(p => {
+                            html += `<div class="product-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 flex flex-col"><div class="p-5 flex-grow"><h3 class="text-lg font-semibold text-gray-800">${p.description}</h3><p class="text-sm text-gray-500 mt-2">Código: ${p.code}</p></div><div class="px-5 py-3 bg-gray-50"><span class="inline-block bg-green-200 text-green-800 text-xs font-semibold px-2.5 py-1 rounded-full">En Stock</span></div></div>`;
+                        });
+                        html += '</div>';
+                    }
+                }
+                return html;
+            }
+
+            function renderProducts(category, searchTerm = '') {
+                const container = document.getElementById(category);
+                if (!container || !products[category]) {
+                    if (container) container.innerHTML = '';
+                    return false;
+                }
+                const filtered = products[category].filter(p => p.description.toLowerCase().includes(searchTerm.toLowerCase()) || p.category.toLowerCase().includes(searchTerm.toLowerCase()));
+                container.innerHTML = generateCardHTML(filtered, category);
+                return filtered.length > 0;
+            }
+
+            function handleSearch() {
+                const term = searchInput.value;
+                const activeCat = document.querySelector('.tab-active').dataset.category;
+                const found = renderProducts(activeCat, term);
+                noResultsDiv.classList.toggle('hidden', !found);
+            }
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    tabs.forEach(t => t.classList.replace('tab-active', 'tab-inactive'));
+                    this.classList.replace('tab-inactive', 'tab-active');
+                    contents.forEach(c => c.classList.add('hidden'));
+                    
+                    const activeCat = this.dataset.category;
+                    document.getElementById(activeCat).classList.remove('hidden');
+                    
+                    if (activeCat === 'inicio') {
+                        searchContainer.classList.add('hidden');
+                    } else {
+                        searchContainer.classList.remove('hidden');
+                    }
+
+                    searchInput.value = '';
+                    if(activeCat !== 'inicio'){
+                        const found = renderProducts(activeCat);
+                        noResultsDiv.classList.toggle('hidden', !found);
+                    } else {
+                        noResultsDiv.classList.add('hidden');
+                    }
+                });
+            });
+
+            searchInput.addEventListener('input', handleSearch);
+
+            // Carga inicial
+            function initializePage() {
+                const initialCat = document.querySelector('.tab-active').dataset.category;
+                if (initialCat === 'inicio') {
+                    searchContainer.classList.add('hidden');
+                } else {
+                    searchContainer.classList.remove('hidden');
+                    const found = renderProducts(initialCat);
+                    noResultsDiv.classList.toggle('hidden', !found);
+                }
+            }
+            
+            initializePage();
+        });
+    </script>
+</body>
+</html>
